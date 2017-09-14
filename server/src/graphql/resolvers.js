@@ -1,22 +1,23 @@
-const list = [
-  {id: '1', title: 'graphql is awesome', owner: 'Ben Doe'},
-  {id: '2', title: 'Vue.js and apollo is so awesome', owner: 'john Doe'},
-  {id: '3', title: 'the best phone for 2017 is  iphone x', owner: 'techcrunch'}
-]
 module.exports = {
   Query: {
-    allList (root, args, context) {
-      return list
+    async allPost (root, args, {DB}) {
+      const posts = await DB.Post.find()
+      return posts
     },
-    listById (root, args, context) {
-      const listItem = list.find((item) => {
-        // find the item in a list
-        if (item.id === args.id) {
-          return item
-        }
-        // throw new Error('item not found')
-      })
-      return listItem
+    async postById (root, args, {DB}) {
+      const {id} = args
+      const post = await DB.Post.findById({_id: id})
+      if (!post) {
+        throw new Error('post not found ')
+      }
+      return post
+    }
+  },
+  Mutation: {
+    createPost (root, args, {DB}) {
+      const post = args
+      const newPost = new DB.Post(post)
+      return newPost.save()
     }
   }
 }

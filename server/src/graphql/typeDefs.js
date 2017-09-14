@@ -1,11 +1,15 @@
 module.exports = `
-  type List {
+  type Post {
     id: ID!
     title: String!
-    owner: String!   
+    content: String!  
+    createdAt: String! 
   }
   type Query {
-    allList: [List]!
-    listById(id: ID!): List!
+    allPost: [Post]!
+    postById(id: ID!): Post!
+  }
+  type Mutation {
+    createPost(title: String!, content: String!): Post
   }
 `
