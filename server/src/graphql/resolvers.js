@@ -2,6 +2,7 @@ module.exports = {
   Query: {
     async allPost (root, args, {DB}) {
       const posts = await DB.Post.find()
+      console.log(posts)
       return posts
     },
     async postById (root, args, {DB}) {
