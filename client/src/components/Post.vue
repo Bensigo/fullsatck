@@ -23,7 +23,8 @@ export default {
         return {
           id: this.id
         }
-      }
+      },
+      fetchPolicy: 'cache-and-network'
     }
   }
 }

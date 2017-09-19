@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form @submit="createPost">
     <label for="title">Title</label>
     <br/>
     <input type='text' class="textInput" name='title' v-model='title' />
@@ -9,12 +9,13 @@
     <br/>
     <textarea class="textarea" name='content' v-model='content'></textarea>
     <br/>
-    <button type="submit" @click="addPost" class='btn'>Add</button>
+    <button type="submit" class='btn'>Add</button>
   </form>
 </template>
 
 <script>
 import {ADD_POST} from '../graphql/addPost'
+import {ALL_POST_QUERY} from '../graphql/allPost'
 export default {
   data () {
     return {
@@ -23,8 +24,7 @@ export default {
     }
   },
   methods: {
-    addPost () {
-      console.log(this.title, this.content)
+    createPost () {
       const title = this.title
       const content = this.content
       this.$apollo.mutate({
@@ -32,9 +32,22 @@ export default {
         variables: {
           title,
           content
+        },
+        update: (store, {data: {createPost}}) => {
+          // read the data from the cache
+          const data = store.readQuery({query: ALL_POST_QUERY})
+          console.log(data)
+          // add the post to the end
+          data.allPost.push(createPost)
+          // write the mutation data to the cache
+          store.writeQuery({query: ALL_POST_QUERY, data})
         }
+      }).then((data) => {
+        console.log('am in promise')
+      }).catch((error) => {
+        console.error(error)
       })
-      this.$router.push('/')
+      this.$router.push({path: '/'})
     }
   }
 }
